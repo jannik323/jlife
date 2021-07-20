@@ -1,0 +1,89 @@
+*{
+    margin : 0px;
+    box-sizing: border-box;
+    font-family: monospace;
+}
+
+body{
+    height:100%;
+    display:inline;
+    text-align: left;
+    background-color: black;
+    
+}
+canvas {
+    background-color: blanchedalmond;
+    max-height: 80vh;
+    max-width: 80vh;
+    border: 0.5rem ridge grey;
+    padding: 0.5rem;
+}
+
+.all{
+margin: 1rem;
+display: flex;
+flex-flow:column;
+}
+
+.pause{
+z-index: 1;
+display: none;
+color:black;
+border: 0.5rem ridge grey;
+background-color: blanchedalmond;
+font-size: 1rem;
+padding: 0.25rem;
+width: 80vh;
+margin-top: 1rem;
+}
+
+label{
+font-size: 2rem;
+color: blanchedalmond;
+}
+
+input{
+width:max-content;
+
+
+}
+
+.group{
+    display: flex;
+    flex-direction: column;
+    border: 0.5rem ridge grey;
+    width:max-content;
+    padding: 0.5rem;
+
+}
+
+.group:hover{
+    background-color: grey;
+
+}
+
+.inputs{
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    
+}
+
+button{
+margin-left: 1rem;
+display: inherit;
+font-size: 2rem;
+color: blanchedalmond;
+background-color: black;
+border: 0.5rem ridge grey;
+padding-left: 1rem;
+padding-right: 1rem;
+padding: 0.5rem;
+
+
+}
+
+button:hover{
+    background-color: grey;
+
+}
