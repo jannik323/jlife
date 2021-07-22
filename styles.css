@@ -11,12 +11,13 @@ body{
     background-color: black;
     
 }
-canvas {
-    background-color: blanchedalmond;
-    max-height: 80vh;
-    max-width: 80vh;
+
+.canvasborder{
     border: 0.5rem ridge grey;
-    padding: 0.5rem;
+    width:min-content;
+    height: min-content;
+    background-color: white;
+
 }
 
 .all{
@@ -30,7 +31,7 @@ z-index: 1;
 display: none;
 color:black;
 border: 0.5rem ridge grey;
-background-color: blanchedalmond;
+background-color: white;
 font-size: 1rem;
 padding: 0.25rem;
 width: 80vh;
@@ -54,6 +55,7 @@ width:max-content;
     border: 0.5rem ridge grey;
     width:max-content;
     padding: 0.5rem;
+    margin-right: 1rem;
 
 }
 
@@ -70,7 +72,7 @@ width:max-content;
 }
 
 button{
-margin-left: 1rem;
+margin-right: 1rem;
 display: inherit;
 font-size: 2rem;
 color: blanchedalmond;

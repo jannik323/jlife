@@ -4,15 +4,20 @@
 let GameSpeed = 10;
 let lastGameSpeed = 0;
 let lastRenderTime = 0;
+let styleblock = true;
 
 let blocksList = [];
 
 let copyblocksList = [];
-const colors = ["white","white","black"];
+const colors = ["white","white","white","white","black"];
+
+let mouseX = 0;
+let mouseY = 0;
 
 let can = document.getElementById("canvas");
 can.width = can.height =8*window.innerHeight/10;
-let scale_divider = 50;
+let scale_divider = window.prompt("grid size?  (please only enter numnbers)",50);
+if (scale_divider === null || scale_divider<0){scale_divider = 50}
 let scale = can.width/scale_divider;
 let ctx = can.getContext("2d");
 ctx.lineWidth = 1;
@@ -49,7 +54,7 @@ class block {
             blocksList[i].color = "white";
             break;
         case 1:
-            blocksList[i].color = "lightgrey";
+            if(styleblock){blocksList[i].color = "lightgrey";}else{blocksList[i].color = "white"}
             break;
         case 2:
             break;
@@ -57,17 +62,21 @@ class block {
             blocksList[i].color = "black";
             break;
         case 4:
-            blocksList[i].color = "darkred";
-            break;
+            if(styleblock){blocksList[i].color = "darkred";break;}
+            
         case 5:
         case 6:
         case 7:
         case 8:
-            blocksList[i].color = "grey";
+            if(styleblock){blocksList[i].color = "grey";}else{blocksList[i].color = "white"}
             break;
 
 
         }
+
+        
+
+
         
     
     }
@@ -111,7 +120,7 @@ class block {
 
     
 //start game
-creategrid()
+creategrid(true);
 startGame();
 
 //game start
@@ -123,10 +132,17 @@ window.requestAnimationFrame(main);
 
 //create grid
 
-function creategrid(){
+function creategrid(populate){
     for (let length_y = 0; length_y<scale_divider; length_y++ ){
         for (let length_x = 0; length_x<scale_divider; length_x++ ){
-        createblock(length_x,length_y,getrandcolor());}}
+            if(populate){
+        createblock(length_x,length_y,getrandcolor());}
+        else{
+            createblock(length_x,length_y,"white");
+        }
+    
+    
+    }}
 
 }
 
@@ -152,6 +168,8 @@ copyblocksList = blocksList.map(a => {return {...a}})
 
 for (let i= 0; i<blocksList.length;i++){   
 blocksList[i].updateBlock(i);}
+
+
 
 }
 
@@ -189,16 +207,24 @@ function getrandcolor(){
 //pause game 
 
 function pausegame(){
-
+    render()
     if (GameSpeed != 0){
         document.getElementsByClassName("pause")[0].style.display = "block";
-        console.log("Game has been stopped");
         lastGameSpeed = GameSpeed;
         GameSpeed = 0 ;
     }else{
-        console.log("Game has been continued");
         GameSpeed = lastGameSpeed;
         document.getElementsByClassName("pause")[0].style.display = "none";}
+}
+
+//toggle style
+
+function togglestyle(){
+    if (styleblock === true){
+        styleblock = false ;
+    }else{
+        styleblock = true;}
+
 }
 
 
@@ -220,3 +246,21 @@ addEventListener("keydown", e => {
             break;
                 } 
 })
+
+onclick = function(e){
+    
+    var rect = can.getBoundingClientRect();
+    mouseX = Math.floor((e.clientX- rect.left) /scale );
+    mouseY = Math.floor((e.clientY- rect.top) / scale );
+    let i = mouseX + (mouseY*scale_divider);
+    if(i>=0 && i< blocksList.length){
+        if (blocksList[i].color === "black"){
+            blocksList[i].color = "white";
+        }else{
+
+            blocksList[i].color = "black";
+        }
+        render()
+    }
+    
+}

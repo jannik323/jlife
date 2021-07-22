@@ -15,21 +15,29 @@
     
 
     <div class="all"> 
-    
+    <div class="canvasborder">
     <canvas id="canvas"></canvas>
+    </div>      
     <h1 class="pause" >Pause</h1>
     <div class="inputs">
     <div class="group">
     <label for="Fps">Game Speed</label>
-    <input  name="Fps" type="range" step="1" value="10" min="1" max="60" onchange=" if(GameSpeed != 0){GameSpeed = this.value }" >
+    <input  name="Fps" type="range" step="1" defaultValue="10" value="10" min="1" max="60" onchange=" if(GameSpeed != 0){GameSpeed = this.value }" >
     </div>
-    <button  onclick=" blocksList=[]; creategrid(); " > Reset </button>
+    
+    <div class="group">
+        <label for="style">style</label>
+        <input  name="style" type="checkbox"  onchange=" togglestyle() " checked="true" >
+    </div>
+
+    <button  onclick=" blocksList=[]; creategrid(false);" > Clear </button>
+    <button  onclick=" blocksList=[]; creategrid(true); " > Random </button>
     <button  onclick=" pausegame(); " > Pause </button>
     </div>
     </div>
     
 
-    
+     
     <script src="script.js" ></script>
 </body>
 
