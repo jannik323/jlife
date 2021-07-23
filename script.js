@@ -1,12 +1,12 @@
 "use strict";
 
-
 let GameSpeed = 10;
 let lastGameSpeed = 0;
 let lastRenderTime = 0;
 let styleblock = true;
 
 let blocksList = [];
+let inputType = "single cell toggle";
 
 let copyblocksList = [];
 const colors = ["white","white","white","white","black"];
@@ -15,12 +15,163 @@ let mouseX = 0;
 let mouseY = 0;
 
 let can = document.getElementById("canvas");
-can.width = can.height =8*window.innerHeight/10;
+can.width = can.height =7*window.innerHeight/10;
 let scale_divider = window.prompt("grid size?  (please only enter numnbers)",50);
 if (scale_divider === null || scale_divider<0){scale_divider = 50}
+scale_divider = parseInt(scale_divider);
 let scale = can.width/scale_divider;
 let ctx = can.getContext("2d");
 ctx.lineWidth = 1;
+
+
+
+const inputTypes = [
+
+    {name:" single cell",
+    cantoogle:false,
+    x:1,
+    y:1,
+    content: [1]
+    },
+
+    {name:"single cell toggle",
+    cantoogle:true,
+    x:1,
+    y:1,
+    content: [1]
+    },
+
+    {name:"single cell delete ",
+    cantoogle:false,
+    x:1,
+    y:1,
+    content: [0]
+    },
+
+    {name:"Block",
+    cantoogle:false,
+    x:2,
+    y:2,
+    content: [1,1,1,1]
+    },
+
+    {name:"Beehive",
+    cantoogle:false,
+    x:4,
+    y:3,
+    content: [0,1,1,0,1,0,0,1,0,1,1,0]
+    },
+
+    {name:"Blinker",
+    cantoogle:false,
+    x:3,
+    y:1,
+    content: [1,1,1]
+    },
+
+    {name:"Galaxy",
+    cantoogle:false,
+    x:9,
+    y:9,
+    content: [  1,1,1,1,1,1,0,1,1,
+                1,1,1,1,1,1,0,1,1,
+                0,0,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,0,0,
+                1,1,0,1,1,1,1,1,1,
+                1,1,0,1,1,1,1,1,1,
+    ]
+    },
+    
+    
+    {name:"Glider",
+    cantoogle:false,
+    x:3,
+    y:3,
+    content: [0,1,0,0,0,1,1,1,1]
+    },
+
+    {name:"R-pentomino",
+    cantoogle:false,
+    x:3,
+    y:3,
+    content: [0,1,1,1,1,0,0,1,0]
+    },
+
+    {name:"Lightweight spaceship",
+    cantoogle:false,
+    x:5,
+    y:4,
+    content: [  0,1,0,0,1,
+                1,0,0,0,0,
+                1,0,0,0,1,
+                1,1,1,1,0,
+    ]
+    },
+    
+    {name:"Middleweight spaceship",
+    cantoogle:false,
+    x:6,
+    y:5,
+    content: [  0,0,0,1,0,0,
+                0,1,0,0,0,1,
+                1,0,0,0,0,0,
+                1,0,0,0,0,1,
+                1,1,1,1,1,0,
+    ]
+    },
+
+    {name:"Heavyweight spaceship",
+    cantoogle:false,
+    x:7,
+    y:6,
+    content: [  0,0,0,1,1,0,0,
+                0,1,0,0,0,0,1,
+                1,0,0,0,0,0,0,
+                1,0,0,0,0,0,1,
+                1,1,1,1,1,1,0,
+    ]
+    },
+    
+    {name:"Copperhead",
+    cantoogle:false,
+    x:6,
+    y:13,
+    content: [  0,0,1,1,0,0,
+                0,1,0,0,1,0,
+                0,1,0,0,1,0,
+                1,0,0,0,0,1,
+                1,0,0,0,0,1,
+                0,1,1,1,1,0,
+                1,1,0,0,1,1,
+                1,0,0,0,0,1,
+                1,0,0,0,0,1,
+                0,0,0,0,0,0,
+                0,0,0,0,0,0,
+                0,1,1,1,1,0,
+                0,0,1,1,0,0,
+    ]
+    },
+
+    {name:"Glider gun",
+    cantoogle:false,
+    x:36,
+    y:9,
+    content: [  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+                0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+
+    ]
+    },
+]
 
 
 // piece (ein block)
@@ -120,6 +271,8 @@ class block {
 
     
 //start game
+
+populateTypes();
 creategrid(true);
 startGame();
 
@@ -203,6 +356,23 @@ function getrandcolor(){
 }
 
 
+// populateTypes
+
+function populateTypes(){
+
+    inputTypes.forEach((v)=>{
+        let typeoption = document.createElement('option');
+        typeoption.value = v.name;
+        typeoption.text = v.name;
+        let parent = document.getElementById('types');
+        parent.appendChild(typeoption);
+
+    })
+
+
+
+}
+
 
 //pause game 
 
@@ -227,6 +397,19 @@ function togglestyle(){
 
 }
 
+
+// change input type
+
+function changeinput(e){
+    inputType = e.value;
+}
+
+// find index with name
+
+function findindex(array,key,value){
+    let pos = array.map((e)=>e[key]).indexOf(value);
+    return pos;
+}
 
 //input handling und so
 
@@ -253,14 +436,33 @@ onclick = function(e){
     mouseX = Math.floor((e.clientX- rect.left) /scale );
     mouseY = Math.floor((e.clientY- rect.top) / scale );
     let i = mouseX + (mouseY*scale_divider);
-    if(i>=0 && i< blocksList.length){
-        if (blocksList[i].color === "black"){
-            blocksList[i].color = "white";
-        }else{
+    if(i>=0 && i< blocksList.length && mouseX< scale_divider ){
 
-            blocksList[i].color = "black";
+
+        let inputTypeindex = findindex(inputTypes,"name",inputType) ;
+        let ixy = 0;
+        for (let iy = 0; iy<inputTypes[inputTypeindex].y; iy++){
+         for (let ix = 0; ix<inputTypes[inputTypeindex].x; ix++){
+             if (inputTypes[inputTypeindex].content[ixy]){
+                    console.log(inputTypes[inputTypeindex].cantoogle)
+                if (inputTypes[inputTypeindex].cantoogle){
+                    if (blocksList[i].color === "black")
+                    {blocksList[i].color = "white";}else{blocksList[i].color = "black";}
+                }else{
+                    blocksList[i+(scale_divider*iy)+ix].color = "black" ;
+                }
+                
+             }else{
+                blocksList[i+(scale_divider*iy)+ix].color = "white" ;
+             }
+            
+            ixy++;
+         }
         }
-        render()
+        
+
+        render();
     }
     
 }
+

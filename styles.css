@@ -2,13 +2,16 @@
     margin : 0px;
     box-sizing: border-box;
     font-family: monospace;
+    font-size: 1rem;
 }
 
 body{
     height:100%;
-    display:inline;
-    text-align: left;
+    display:flex;
+    flex-direction: row;
+    text-align: center;
     background-color: black;
+    margin: 1rem;
     
 }
 
@@ -17,11 +20,11 @@ body{
     width:min-content;
     height: min-content;
     background-color: white;
+    margin-right: 1rem;
 
 }
 
 .all{
-margin: 1rem;
 display: flex;
 flex-flow:column;
 }
@@ -33,19 +36,18 @@ color:black;
 border: 0.5rem ridge grey;
 background-color: white;
 font-size: 1rem;
-padding: 0.25rem;
-width: 80vh;
+padding: 2rem;
 margin-top: 1rem;
+width: fit-content;
 }
 
 label{
-font-size: 2rem;
 color: blanchedalmond;
 }
 
 input{
 width:max-content;
-
+margin-top: 0.5rem;
 
 }
 
@@ -54,10 +56,12 @@ width:max-content;
     flex-direction: column;
     border: 0.5rem ridge grey;
     width:max-content;
+    height:min-content;
     padding: 0.5rem;
     margin-right: 1rem;
 
 }
+
 
 .group:hover{
     background-color: grey;
@@ -74,18 +78,25 @@ width:max-content;
 button{
 margin-right: 1rem;
 display: inherit;
-font-size: 2rem;
 color: blanchedalmond;
 background-color: black;
 border: 0.5rem ridge grey;
 padding-left: 1rem;
 padding-right: 1rem;
 padding: 0.5rem;
-
+height: min-content;
 
 }
 
 button:hover{
     background-color: grey;
 
+}
+
+select{
+    display: block;
+    height: fit-content;
+    width: fit-content;
+    
+    
 }
