@@ -192,6 +192,8 @@ class block {
     render = function(){  
         ctx.fillStyle= this.color;
         ctx.fillRect(scale*this.x,scale*this.y,scale , scale);
+        ctx.fillStyle= "grey";
+        ctx.strokeRect(scale*this.x,scale*this.y,scale , scale);
     }
     
     updateBlock = function(i){
