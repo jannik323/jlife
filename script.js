@@ -4,6 +4,7 @@ let GameSpeed = 10;
 let lastGameSpeed = 0;
 let lastRenderTime = 0;
 let styleblock = true;
+let grid = false;
 
 let blocksList = [];
 let inputType = "single cell toggle";
@@ -24,24 +25,35 @@ let ctx = can.getContext("2d");
 ctx.lineWidth = 1;
 
 
+class customTypeobject {
+    constructor(name,x,y,content = []){
+        this.name = name;
+        this.cantoogle = false;
+        this.x = x;
+        this.y = y;
+        this.content = content;
+    }
+
+}
+
 
 const inputTypes = [
 
-    {name:" single cell",
+    {name:" Single cell",
     cantoogle:false,
     x:1,
     y:1,
     content: [1]
     },
 
-    {name:"single cell toggle",
+    {name:"Single cell toggle",
     cantoogle:true,
     x:1,
     y:1,
     content: [1]
     },
 
-    {name:"single cell delete ",
+    {name:"Single cell delete ",
     cantoogle:false,
     x:1,
     y:1,
@@ -192,8 +204,9 @@ class block {
     render = function(){  
         ctx.fillStyle= this.color;
         ctx.fillRect(scale*this.x,scale*this.y,scale , scale);
-        ctx.fillStyle= "grey";
-        ctx.strokeRect(scale*this.x,scale*this.y,scale , scale);
+        if (grid){
+            ctx.fillStyle= "grey";
+            ctx.strokeRect(scale*this.x,scale*this.y,scale , scale);}
     }
     
     updateBlock = function(i){
@@ -375,6 +388,19 @@ function populateTypes(){
 
 }
 
+function addnewcustomTypeselect(){
+
+    let typeoption = document.createElement('option');
+    typeoption.value = inputTypes[inputTypes.length-1].name;
+    typeoption.text = inputTypes[inputTypes.length-1].name;
+    typeoption.selected = true;
+    let parent = document.getElementById('types');
+    parent.appendChild(typeoption);
+    changeinput(parent);
+
+
+}
+
 
 //pause game 
 
@@ -399,6 +425,15 @@ function togglestyle(){
 
 }
 
+// toggle grid
+
+function togglegrid(){
+    if (grid === true){
+        grid = false ;
+    }else{
+        grid = true;}
+
+}
 
 // change input type
 
@@ -413,6 +448,18 @@ function findindex(array,key,value){
     return pos;
 }
 
+
+// add custom type
+
+function addcustomtype(){
+let customTinput = document.getElementById("customtype").value;
+const customT = customTinput.split(",").map((v,i)=>{if(i !== 0){return parseInt(v);}else{return v}});
+const customContent = customT.slice(3,customT.length);
+const newCustomType = new customTypeobject(customT[0],customT[1],customT[2],customContent);
+inputTypes.push(newCustomType);
+addnewcustomTypeselect();
+}
+
 //input handling und so
 
 addEventListener("keydown", e => {
@@ -420,14 +467,6 @@ addEventListener("keydown", e => {
     switch(e.keyCode){
         case 27:
             pausegame();
-            break;
-        case 82: // r
-        blocksList = [];
-        creategrid();
-            break;
-        case 32:
-            console.log("1", blocksList);
-            update();
             break;
                 } 
 })

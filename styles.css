@@ -3,6 +3,7 @@
     box-sizing: border-box;
     font-family: monospace;
     font-size: 1rem;
+    color: blanchedalmond;
 }
 
 body{
@@ -41,9 +42,6 @@ margin-top: 1rem;
 width: fit-content;
 }
 
-label{
-color: blanchedalmond;
-}
 
 input{
 width:max-content;
@@ -62,6 +60,10 @@ margin-top: 0.5rem;
 
 }
 
+.topmargin{
+margin-top: 1rem;;
+
+}
 
 .group:hover{
     background-color: grey;
@@ -78,7 +80,6 @@ margin-top: 0.5rem;
 button{
 margin-right: 1rem;
 display: inherit;
-color: blanchedalmond;
 background-color: black;
 border: 0.5rem ridge grey;
 padding-left: 1rem;
@@ -100,3 +101,9 @@ select{
     
     
 }
+
+textarea,option,select{
+
+    color: black;
+}
+

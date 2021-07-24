@@ -4,8 +4,8 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>test jlife</title>
-        <meta name="jlife" author="323j">
+        <title>test site 1</title>
+        <meta name="tetris oder so" content="Some testing" author="323j">
         <link rel="stylesheet" href="styles.css">
     </head>
     
@@ -31,6 +31,11 @@
         <input  name="style" type="checkbox"  onchange=" togglestyle() " checked="true" >
     </div>
 
+    <div class="group">
+        <label for="grid">grid</label>
+        <input  name="grid" type="checkbox"  onchange=" togglegrid() "  >
+    </div>
+
     <button  onclick=" blocksList=[]; creategrid(false); render();"  > Clear </button>
     <button  onclick=" blocksList=[]; creategrid(true); render(); "  > Random </button>
     <button  onclick=" pausegame(); " > Pause </button>
@@ -42,6 +47,39 @@
     <select id="types" onchange="changeinput(this);">
     </select>
     </div>
+
+    <div class="group topmargin">
+        How to add a custom type 
+        <textarea disabled>
+First is the name.
+Second parameter is 
+the x border.
+Third parameter is 
+the y border.
+The Rest is all the 
+content of the pattern.
+It starts at the top 
+left and goes from 
+right until it reaches 
+the x border.
+Enter 1 for a live 
+cell and 0 for a dead one.
+        </textarea>
+    </div>
+    <div class="group topmargin">
+    <label for="types" >Custom type</label>
+    <textarea id="customtype">  
+    example type,
+    4,
+    4,
+    1,1,0,0,
+    1,1,0,0,
+    0,0,1,1,
+    0,0,1,1
+    </textarea>
+    <button style="margin-top: 1rem; width:min-content;" onclick="addcustomtype();" >Create</button>
+    </div>
+
     <h1 class="pause" >Pause</h1>
     </div>
 
