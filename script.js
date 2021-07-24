@@ -5,19 +5,22 @@ let lastGameSpeed = 0;
 let lastRenderTime = 0;
 let styleblock = true;
 let grid = false;
+let mode = "Place";
+let select = "Fill";
 
 let blocksList = [];
-let inputType = "single cell toggle";
+let inputType = "Single cell toggle";
 
 let copyblocksList = [];
 const colors = ["white","white","white","white","black"];
 
 let mouseX = 0;
 let mouseY = 0;
+let clicks = 0;
 
 let can = document.getElementById("canvas");
 can.width = can.height =7*window.innerHeight/10;
-let scale_divider = window.prompt("grid size?  (please only enter numbers)",50);
+let scale_divider = window.prompt("grid size?  (please only enter numnbers)",50);
 if (scale_divider === null || scale_divider<0){scale_divider = 50}
 scale_divider = parseInt(scale_divider);
 let scale = can.width/scale_divider;
@@ -36,18 +39,28 @@ class customTypeobject {
 
 }
 
+const selector = {
+
+x1:0,
+y1:0,
+x2:0,
+y2:0
+
+
+}
+
 
 const inputTypes = [
-
-    {name:" Single cell",
-    cantoogle:false,
+    
+    {name:"Single cell toggle",
+    cantoogle:true,
     x:1,
     y:1,
     content: [1]
     },
 
-    {name:"Single cell toggle",
-    cantoogle:true,
+    {name:" Single cell",
+    cantoogle:false,
     x:1,
     y:1,
     content: [1]
@@ -350,7 +363,9 @@ ctx.clearRect(0,0,can.width,can.height)
  
 for (let i= 0; i<blocksList.length;i++){   
 blocksList[i].render();}
-
+ctx.lineWidth = 2;
+if(clicks=== 2){ctx.strokeRect(selector.x1*scale,selector.y1*scale,(selector.x2-selector.x1+1)*scale,(selector.y2-selector.y1+1)*scale,)}
+ctx.lineWidth = 1;
 }
 
 
@@ -441,6 +456,31 @@ function changeinput(e){
     inputType = e.value;
 }
 
+// change mode
+
+function changemode(e){
+mode = e.value;
+let inputselect = document.getElementById("inputtype");
+let selectselect = document.getElementById("selecttype");
+if(e.value === "Place"){
+inputselect.style.display = "block";
+selectselect.style.display = "none";
+}else{
+inputselect.style.display = "none";
+selectselect.style.display = "block";
+}
+
+}
+
+
+// change select type
+
+function changeselect(e){
+select= e.value;
+
+
+}
+
 // find index with name
 
 function findindex(array,key,value){
@@ -458,6 +498,25 @@ const customContent = customT.slice(3,customT.length);
 const newCustomType = new customTypeobject(customT[0],customT[1],customT[2],customContent);
 inputTypes.push(newCustomType);
 addnewcustomTypeselect();
+mode = "Place";
+let modeelement = document.getElementById("mode");
+modeelement.value = "Place";
+changemode(modeelement);
+}
+
+// select fill
+
+function selectfill(color){
+
+    let ydiff = selector.y2-selector.y1+1;
+    let xdiff = selector.x2-selector.x1+1;
+    for (let iy = 0; iy<ydiff; iy++){
+        for (let ix = 0; ix<xdiff; ix++){
+            blocksList[ix+(scale_divider*(selector.y1+iy))+selector.x1].color = color;
+            
+        }}
+
+
 }
 
 //input handling und so
@@ -473,19 +532,21 @@ addEventListener("keydown", e => {
 
 onclick = function(e){
     
+    
     var rect = can.getBoundingClientRect();
     mouseX = Math.floor((e.clientX- rect.left) /scale );
     mouseY = Math.floor((e.clientY- rect.top) / scale );
     let i = mouseX + (mouseY*scale_divider);
     if(i>=0 && i< blocksList.length && mouseX< scale_divider ){
 
+        clicks ++;
 
+        if(mode === "Place"){
         let inputTypeindex = findindex(inputTypes,"name",inputType) ;
         let ixy = 0;
         for (let iy = 0; iy<inputTypes[inputTypeindex].y; iy++){
          for (let ix = 0; ix<inputTypes[inputTypeindex].x; ix++){
              if (inputTypes[inputTypeindex].content[ixy]){
-                    console.log(inputTypes[inputTypeindex].cantoogle)
                 if (inputTypes[inputTypeindex].cantoogle){
                     if (blocksList[i].color === "black")
                     {blocksList[i].color = "white";}else{blocksList[i].color = "black";}
@@ -501,6 +562,61 @@ onclick = function(e){
          }
         }
         
+        clicks = 0;
+        
+        }
+        if(mode === "Select"){
+            switch(clicks){
+                case 1:
+                    selector.x1 = mouseX;
+                    selector.y1 = mouseY;
+                    break;
+                case 2:
+                    selector.x2 = mouseX;
+                    selector.y2 = mouseY;
+                    break;
+                case 3:
+                    clicks = 0;
+
+                    switch(select){
+                        
+                        case "Fill":
+                            selectfill("black");
+                            break;
+                        case "Delete":
+                            selectfill("white");
+                            break;
+                        case "Copy":
+                            render();
+                            let copycustom = [];
+                            let ydiff = selector.y2-selector.y1+1;
+                            let xdiff = selector.x2-selector.x1+1;
+                            copycustom.push("placeholder");
+                            copycustom.push(xdiff);
+                            copycustom.push(ydiff);
+                            for (let iy = 0; iy<ydiff; iy++){
+                                for (let ix = 0; ix<xdiff; ix++){
+                                    if(blocksList[ix+(scale_divider*(selector.y1+iy))+selector.x1].color === "black"){
+                                        copycustom.push(1);}else{copycustom.push(0);}
+                                    
+                                }}
+                            console.log(copycustom);
+                            document.getElementById("customtype").value = copycustom.toString();
+
+                            break;
+                        default:
+                        console.log("yeayea")    
+                        break;
+
+
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+
+        }
 
         render();
     }

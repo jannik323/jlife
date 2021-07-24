@@ -42,10 +42,31 @@
     </div>
     </div>
     <div class="sidebar">
+    
     <div class="group">
+    <label for="mode" >Choose Mode</label>
+    <select id="mode" onchange="changemode(this);">
+        <option selected >Place</option>
+        <option>Select</option>
+    </select>
+    </div>
+
+
+    <div class="group topmargin" id="inputtype">
     <label for="types" >Choose cell input type</label>
     <select id="types" onchange="changeinput(this);">
     </select>
+    </div>
+
+
+    <div class="group topmargin" id="selecttype">
+    <label for="select" >Choose select type</label>
+    <select id="select" onchange="changeselect(this);">
+        <option selected>Fill</option>
+        <option>Delete</option>
+        <option>Copy</option>
+    </select>
+    <button style="margin-top: 1rem; width:min-content;" onclick="clicks=0;">Cancel</button>
     </div>
 
     <div class="group topmargin">

@@ -42,6 +42,10 @@ margin-top: 1rem;
 width: fit-content;
 }
 
+#selecttype{
+display: none;
+}
+
 
 input{
 width:max-content;
