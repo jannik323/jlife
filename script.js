@@ -19,14 +19,13 @@ let mouseY = 0;
 let clicks = 0;
 
 let can = document.getElementById("canvas");
-can.width = can.height =7*window.innerHeight/10;
+can.width = can.height =6.5*window.innerHeight/10;
 let scale_divider = window.prompt("grid size?  (please only enter numnbers)",50);
 if (scale_divider === null || scale_divider<0){scale_divider = 50}
 scale_divider = parseInt(scale_divider);
 let scale = can.width/scale_divider;
 let ctx = can.getContext("2d");
 ctx.lineWidth = 1;
-
 
 class customTypeobject {
     constructor(name,x,y,content = []){
@@ -504,6 +503,17 @@ modeelement.value = "Place";
 changemode(modeelement);
 }
 
+// copycustom
+
+function copycuston(){
+    let customTinput = document.getElementById("customtype");
+    customTinput.select();
+    customTinput.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    give_alert("alert"," ----------------- Your custom type has been copied to your clipboard! -----------------","blanchedalmond",3000);
+
+}
+
 // select fill
 
 function selectfill(color){
@@ -517,6 +527,17 @@ function selectfill(color){
         }}
 
 
+}
+
+// custom alert
+
+function give_alert(alert_id,text,color,time){
+    let alert_text = document.getElementById(alert_id);
+    alert_text.innerHTML = text; 
+    alert_text.style.color = color;
+    alert_text.style.display  = "block";  
+    setTimeout( ()=>{alert_text.style.display  = "none";   } ,time) ;
+   
 }
 
 //input handling und so

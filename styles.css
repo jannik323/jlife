@@ -21,13 +21,22 @@ body{
     width:min-content;
     height: min-content;
     background-color: white;
-    margin-right: 1rem;
+    
 
+}
+
+.sidebar{
+    overflow-y: auto;
+    max-width: fit-content;
 }
 
 .all{
 display: flex;
 flex-flow:column;
+overflow: auto;
+margin-right: 1rem;
+
+    
 }
 
 .pause{
@@ -78,7 +87,17 @@ margin-top: 1rem;;
     margin-top: 1rem;
     display: flex;
     flex-direction: row;
-    
+}
+
+.row{
+display: flex;
+flex-direction: row;;
+
+}
+
+#alert{
+    display: none;
+    max-width: min-content ;
 }
 
 button{
