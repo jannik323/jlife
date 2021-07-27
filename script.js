@@ -1,6 +1,6 @@
 "use strict";
 
-let GameSpeed = 20;
+let GameSpeed = 10;
 let lastGameSpeed = 0;
 let lastRenderTime = 0;
 let styleblock = true;
@@ -9,15 +9,14 @@ let mode = "Place";
 let select = "Fill";
 
 let blocksList = [];
-let inputType = "Ant";
+let inputType = "Single cell toggle";
 
 let copyblocksList = [];
-const colors = ["white","white","white","white","white","white","black"];
+const colors = ["white","white","white","white","black"];
 
 let mouseX = 0;
 let mouseY = 0;
 let clicks = 0;
-let dir = [1,0];
 
 let can = document.getElementById("canvas");
 can.width = can.height =6.5*window.innerHeight/10;
@@ -28,6 +27,16 @@ let scale = can.width/scale_divider;
 let ctx = can.getContext("2d");
 ctx.lineWidth = 1;
 
+class customTypeobject {
+    constructor(name,x,y,content = []){
+        this.name = name;
+        this.cantoogle = false;
+        this.x = x;
+        this.y = y;
+        this.content = content;
+    }
+
+}
 
 const selector = {
 
@@ -41,47 +50,151 @@ y2:0
 
 
 const inputTypes = [
-
-    {name:"Ant",
-    cantoogle:false,
-    x:1,
-    y:1,
-    content: [1],
-    state:1,
-    },
     
-    {name:"Block",
-    cantoogle:false,
-    x:1,
-    y:1,
-    content: [1],
-    state:0,
-    },
-
-    {name:"Block toggle",
+    {name:"Single cell toggle",
     cantoogle:true,
     x:1,
     y:1,
-    content: [1],
-    state:0,
+    content: [1]
     },
 
-    {name:"Block delete ",
+    {name:" Single cell",
     cantoogle:false,
     x:1,
     y:1,
-    content: [0],
-    state:0,
+    content: [1]
     },
 
+    {name:"Single cell delete ",
+    cantoogle:false,
+    x:1,
+    y:1,
+    content: [0]
+    },
 
-    {name:"Line",
+    {name:"Block",
+    cantoogle:false,
+    x:2,
+    y:2,
+    content: [1,1,1,1]
+    },
+
+    {name:"Beehive",
+    cantoogle:false,
+    x:4,
+    y:3,
+    content: [0,1,1,0,1,0,0,1,0,1,1,0]
+    },
+
+    {name:"Blinker",
     cantoogle:false,
     x:3,
     y:1,
-    content: [1,1,1],
-    state:0,
-    },    
+    content: [1,1,1]
+    },
+
+    {name:"Galaxy",
+    cantoogle:false,
+    x:9,
+    y:9,
+    content: [  1,1,1,1,1,1,0,1,1,
+                1,1,1,1,1,1,0,1,1,
+                0,0,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,0,0,
+                1,1,0,1,1,1,1,1,1,
+                1,1,0,1,1,1,1,1,1,
+    ]
+    },
+    
+    
+    {name:"Glider",
+    cantoogle:false,
+    x:3,
+    y:3,
+    content: [0,1,0,0,0,1,1,1,1]
+    },
+
+    {name:"R-pentomino",
+    cantoogle:false,
+    x:3,
+    y:3,
+    content: [0,1,1,1,1,0,0,1,0]
+    },
+
+    {name:"Lightweight spaceship",
+    cantoogle:false,
+    x:5,
+    y:4,
+    content: [  0,1,0,0,1,
+                1,0,0,0,0,
+                1,0,0,0,1,
+                1,1,1,1,0,
+    ]
+    },
+    
+    {name:"Middleweight spaceship",
+    cantoogle:false,
+    x:6,
+    y:5,
+    content: [  0,0,0,1,0,0,
+                0,1,0,0,0,1,
+                1,0,0,0,0,0,
+                1,0,0,0,0,1,
+                1,1,1,1,1,0,
+    ]
+    },
+
+    {name:"Heavyweight spaceship",
+    cantoogle:false,
+    x:7,
+    y:6,
+    content: [  0,0,0,1,1,0,0,
+                0,1,0,0,0,0,1,
+                1,0,0,0,0,0,0,
+                1,0,0,0,0,0,1,
+                1,1,1,1,1,1,0,
+    ]
+    },
+    
+    {name:"Copperhead",
+    cantoogle:false,
+    x:6,
+    y:13,
+    content: [  0,0,1,1,0,0,
+                0,1,0,0,1,0,
+                0,1,0,0,1,0,
+                1,0,0,0,0,1,
+                1,0,0,0,0,1,
+                0,1,1,1,1,0,
+                1,1,0,0,1,1,
+                1,0,0,0,0,1,
+                1,0,0,0,0,1,
+                0,0,0,0,0,0,
+                0,0,0,0,0,0,
+                0,1,1,1,1,0,
+                0,0,1,1,0,0,
+    ]
+    },
+
+    {name:"Glider gun",
+    cantoogle:false,
+    x:36,
+    y:9,
+    content: [  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+                0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+                1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+
+    ]
+    },
 ]
 
 
@@ -89,14 +202,16 @@ const inputTypes = [
 
 class block {
 
+
     constructor(x,y,color){
         this.x = x;
         this.y = y;
         this.color = color;
-        this.state = 0; 
-        this.dir = [0,1];
+        this.state = 0;
         
     }
+
+
 
     render = function(){  
         ctx.fillStyle= this.color;
@@ -107,94 +222,76 @@ class block {
     }
     
     updateBlock = function(i){
+        
+        let currentCheck; 
+        currentCheck = this.checkallNeig(i,"black");
 
+        switch(currentCheck){
 
-        if(this.state === 1){
-        let checkedcolor; 
-        checkedcolor = this.checkNeigBlock(this.dir[0],this.dir[1],i);
-
-        if(checkedcolor !== "edge" && checkedcolor !== "ant" ){
-        blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].state = 1;
-        this.state = 0;}
-
-        switch(checkedcolor){
-            case "black":
-                blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].color = "white";
-                blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].dir = this.dir;
-                blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].rotate(1);
-                break;
-
-           case "white":
-               blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].color = "black";
-               blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].dir = this.dir;
-               blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].rotate(0);
-               break;
-
-
-
-            case "ant":
-            case "edge":
-                this.rotate(0);
-                this.rotate(0);
-                blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].dir = this.dir;
-                blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].color = "black";
-                blocksList[i+this.dir[0]+(this.dir[1]*scale_divider)].state += 1;
-                this.state = 0;
-                break;
-            default:
-                break;      
+        case 0:
+            blocksList[i].color = "white";
+            break;
+        case 1:
+            if(styleblock){blocksList[i].color = "lightgrey";}else{blocksList[i].color = "white"}
+            break;
+        case 2:
+            break;
+        case 3:
+            blocksList[i].color = "black";
+            break;
+        case 4:
+            if(styleblock){blocksList[i].color = "darkred";break;}
+            
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+            if(styleblock){blocksList[i].color = "grey";}else{blocksList[i].color = "white"}
+            break;
 
 
         }
+
         
+
+
         
     
-        }
-
-        if(this.state === 2){
-            this.color = "grey";
-        }
-        
-
-    
-
-
     }
 
-
-    checkNeigBlock = function(x,y,i){
+    checkNeigBlock = function(x,y,i,searchcolor){
 
 
         
         if(this.x === scale_divider-1 && x === 1 || this.x === 0 && x === -1 || this.y === 0 && y=== -1 || this.y === scale_divider-1 && y=== 1 ){
-            return "edge";
-        }else if(copyblocksList[i+x+(y*scale_divider)].state === 1){
-            return "ant";
+            return false;
         }else{
-            return copyblocksList[i+x+(y*scale_divider)].color ;
+            if(copyblocksList[i+x+(y*scale_divider)].color === searchcolor){return true;}
         }
         
-    }
-
-    rotate = function(dirR){
-
-        if(dirR){
-            let y = -this.dir[1];
-            let x = this.dir[0];
-            this.dir[1] = x;
-            this.dir[0] = y;
-        }else{
-            let y = this.dir[1];
-            let x = -this.dir[0];
-            this.dir[1] = x;
-            this.dir[0] = y;
-        }
+        return false;
     
     
     }
 
+    checkallNeig = function(i,searchcolor){
 
+        let detectCount = 0;
+        
+        if( this.checkNeigBlock(1,0,i,searchcolor)){detectCount++}
+        if( this.checkNeigBlock(-1,0,i,searchcolor)){detectCount++}
+        if( this.checkNeigBlock(0,1,i,searchcolor)){detectCount++}
+        if( this.checkNeigBlock(0,-1,i,searchcolor)){detectCount++}
+        
+        if( this.checkNeigBlock(1,1,i,searchcolor)){detectCount++}
+        if( this.checkNeigBlock(-1,1,i,searchcolor)){detectCount++}
+        if( this.checkNeigBlock(-1,-1,i,searchcolor)){detectCount++}
+        if( this.checkNeigBlock(1,-1,i,searchcolor)){detectCount++}
+        
 
+        return detectCount;
+        
+    }
 }
 
 
@@ -305,6 +402,18 @@ function populateTypes(){
 
 }
 
+function addnewcustomTypeselect(){
+
+    let typeoption = document.createElement('option');
+    typeoption.value = inputTypes[inputTypes.length-1].name;
+    typeoption.text = inputTypes[inputTypes.length-1].name;
+    typeoption.selected = true;
+    let parent = document.getElementById('types');
+    parent.appendChild(typeoption);
+    changeinput(parent);
+
+
+}
 
 
 //pause game 
@@ -346,7 +455,6 @@ function changeinput(e){
     inputType = e.value;
 }
 
-
 // change mode
 
 function changemode(e){
@@ -372,7 +480,6 @@ select= e.value;
 
 }
 
-
 // find index with name
 
 function findindex(array,key,value){
@@ -380,6 +487,32 @@ function findindex(array,key,value){
     return pos;
 }
 
+
+// add custom type
+
+function addcustomtype(){
+let customTinput = document.getElementById("customtype").value;
+const customT = customTinput.split(",").map((v,i)=>{if(i !== 0){return parseInt(v);}else{return v}});
+const customContent = customT.slice(3,customT.length);
+const newCustomType = new customTypeobject(customT[0],customT[1],customT[2],customContent);
+inputTypes.push(newCustomType);
+addnewcustomTypeselect();
+mode = "Place";
+let modeelement = document.getElementById("mode");
+modeelement.value = "Place";
+changemode(modeelement);
+}
+
+// copycustom
+
+function copycuston(){
+    let customTinput = document.getElementById("customtype");
+    customTinput.select();
+    customTinput.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    give_alert("alert"," ----------------- Your custom type has been copied to your clipboard! -----------------","blanchedalmond",3000);
+
+}
 
 // select fill
 
@@ -420,43 +553,39 @@ addEventListener("keydown", e => {
 
 onclick = function(e){
     
-    let rect = can.getBoundingClientRect();
+    
+    var rect = can.getBoundingClientRect();
     mouseX = Math.floor((e.clientX- rect.left) /scale );
     mouseY = Math.floor((e.clientY- rect.top) / scale );
     let i = mouseX + (mouseY*scale_divider);
-
-
     if(i>=0 && i< blocksList.length && mouseX< scale_divider ){
 
         clicks ++;
 
         if(mode === "Place"){
-
         let inputTypeindex = findindex(inputTypes,"name",inputType) ;
         let ixy = 0;
         for (let iy = 0; iy<inputTypes[inputTypeindex].y; iy++){
-        for (let ix = 0; ix<inputTypes[inputTypeindex].x; ix++){
-
+         for (let ix = 0; ix<inputTypes[inputTypeindex].x; ix++){
              if (inputTypes[inputTypeindex].content[ixy]){
-                 if (inputTypes[inputTypeindex].state === 1){blocksList[i+(scale_divider*iy)+ix].state = 1 ;}
                 if (inputTypes[inputTypeindex].cantoogle){
-
-                    if (blocksList[i].color === "black"){blocksList[i].color = "white";}
-                    else{blocksList[i].color = "black";}
-
+                    if (blocksList[i].color === "black")
+                    {blocksList[i].color = "white";}else{blocksList[i].color = "black";}
                 }else{
-                    blocksList[i+(scale_divider*iy)+ix].color = "black" ;}
+                    blocksList[i+(scale_divider*iy)+ix].color = "black" ;
+                }
                 
-             }else{blocksList[i+(scale_divider*iy)+ix].color = "white" ;}
+             }else{
+                blocksList[i+(scale_divider*iy)+ix].color = "white" ;
+             }
             
             ixy++;
-        }}
-
+         }
+        }
         
         clicks = 0;
+        
         }
-
-
         if(mode === "Select"){
             switch(clicks){
                 case 1:
@@ -475,11 +604,27 @@ onclick = function(e){
                         case "Fill":
                             selectfill("black");
                             break;
-
                         case "Delete":
                             selectfill("white");
                             break;
-                        
+                        case "Copy":
+                            render();
+                            let copycustom = [];
+                            let ydiff = selector.y2-selector.y1+1;
+                            let xdiff = selector.x2-selector.x1+1;
+                            copycustom.push("placeholder");
+                            copycustom.push(xdiff);
+                            copycustom.push(ydiff);
+                            for (let iy = 0; iy<ydiff; iy++){
+                                for (let ix = 0; ix<xdiff; ix++){
+                                    if(blocksList[ix+(scale_divider*(selector.y1+iy))+selector.x1].color === "black"){
+                                        copycustom.push(1);}else{copycustom.push(0);}
+                                    
+                                }}
+                            console.log(copycustom);
+                            document.getElementById("customtype").value = copycustom.toString();
+
+                            break;
                         default:
                         console.log("yeayea")    
                         break;
